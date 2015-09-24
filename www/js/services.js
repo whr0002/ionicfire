@@ -21,10 +21,11 @@
         scope.show(text);
         $window.setTimeout(function () {
             scope.hide();
-        }, 2000);
+        }, 1000);
     };
 
     scope.logout = function () {
+        scope.uid = null;
         scope.authRef.unauth();
         scope.checkSession();
     };
@@ -32,11 +33,11 @@
     scope.checkSession = function () {
         var authData = scope.authRef.getAuth();
         if (authData) {
-            scope.notify("User " + authData.uid + " is logged in with " + authData.provider);
+            //scope.notify("User " + authData.uid + " is logged in with " + authData.provider);
             scope.uid = authData.uid;
             $window.location.href = '#/bucket/list';
         } else {
-            scope.notify("User is logged out");
+            //scope.notify("User is logged out");
             $window.location.href = '#/auth/signin';
         }
     };

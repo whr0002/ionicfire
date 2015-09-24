@@ -45,9 +45,9 @@
 })
 .controller('myListCtrl', function ($scope, $firebaseArray, $window, $ionicModal, SharedService) {
     SharedService.show("Please wait... Processing");
-    $scope.list = [];
-    var ref = new Firebase(SharedService.baseUrl + SharedService.uid);
+    var ref = new Firebase(SharedService.baseUrl + "items/" + SharedService.uid);
     console.log(SharedService.uid);
+    //$scope.list = $firebaseArray(ref);
     ref.on('value', function (snapshot) {
         var data = snapshot.val();
 
@@ -82,7 +82,7 @@
 
     $scope.markCompleted = function (key) {
         SharedService.show("Please wait... Updating List");
-        var itemRef = new Firebase(SharedService.baseUrl + SharedService.uid + '/' + key);
+        var itemRef = new Firebase(SharedService.baseUrl + "items/" + SharedService.uid + '/' + key);
         itemRef.update({
             isCompleted: true
         }, function (error) {
@@ -105,7 +105,10 @@
             }
         });
     };
+
+    $scope.logout = SharedService.logout;
 })
+
 .controller('newCtrl', function ($scope, $window, $firebaseArray, SharedService) {
     $scope.data = { item: "" };
 
@@ -122,23 +125,24 @@
         SharedService.show("Please wait... Creating new");
 
         var form = {
+            uid: SharedService.uid,
             item: item,
             isCompleted: false,
-            created: Date.now(),
-            updated: Date.now()
+            created: Date.now()
         };
 
-        var bucketListRef = new Firebase(SharedService.baseUrl + SharedService.uid);
+        var bucketListRef = new Firebase(SharedService.baseUrl + "items/" + SharedService.uid);
         var list = $firebaseArray(bucketListRef);
         list.$add(form);
         SharedService.hide();
     };
 })
+
 .controller('completedCtrl', function($scope, $window, SharedService) {
     SharedService.show("Please wait... Processing");
     $scope.list = [];
 
-    var bucketListRef = new Firebase(SharedService.baseUrl + SharedService.uid);
+    var bucketListRef = new Firebase(SharedService.baseUrl + "items/" + SharedService.uid);
     bucketListRef.on('value', function(snapshot) {
         $scope.list = [];
         var data = snapshot.val();
@@ -161,7 +165,7 @@
     });
     $scope.deleteItem = function (key) {
         SharedService.show("Please wait... Deleting from List");
-        var itemRef = new Firebase(SharedService.baseUrl + SharedService.uid);
+        var itemRef = new Firebase(SharedService.baseUrl + "items/" + SharedService.uid);
         bucketListRef.child(key).remove(function (error) {
             if (error) {
                 SharedService.hide();
